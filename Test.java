@@ -20,6 +20,6 @@ public class Test {
 
         //Print out cards added to deck.
         for(Card currentCard : deck)
-            System.out.println(currentCard.getFace());
+            System.out.println(currentCard.getFace() + " Suit: " + currentCard.getSuit() + " Value: " + currentCard.getValue());
     }
 }
