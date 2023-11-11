@@ -41,7 +41,7 @@ public class Card {
                     faceAsString = "Q" + suit;
                     break;
                 case 13:
-                    faceAsString = "K" + suit;;
+                    faceAsString = "K" + suit;
                     break;
             }
         }
