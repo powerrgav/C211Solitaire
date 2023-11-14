@@ -7,7 +7,7 @@ public class Test {
 
     //Tests functionality of the Card class.
 
-    private static void testCard(){
+    public static void testCard(){
         //Declare local variables.
         char[] SUITS = {'♣', '♦', '♥', '♠'};
         ArrayList<Card> deck = new ArrayList<>();
