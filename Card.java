@@ -1,13 +1,19 @@
+/*  Project:     C211Solitaire
+*   Author:      Brandon J. AKA TarquisTrueshot
+*   Date:        11/13/2023
+*   Description: Card class that can be used for comparison and output. */
+
+// This class represents one of the 52 cards in a standard deck of cards.
 public class Card {
 
-    //These constants allow the cards to display red or black when output to the console.
+    //These constants allow red Cards to print red when output to the console.
     final String RED_COLOR = "\u001B[31m";
-    final String DEFAULT = "\u001B[0m";
+    final String DEFAULT = "\u001B[0m"; // Returns command line to default color.
     final int value;
     final char suit;
-    //This attribute may be unneccesary, can just have if statement on return for getColor()
     final char color;
 
+    // Constructor to create Card object of a specific suit and value.
     Card(int val, char suitChar){
         value = val;
         suit = suitChar;
@@ -17,18 +23,22 @@ public class Card {
             color = 'R';
     }
 
+    // Getter method returning the suit char of the Card.
     public char getSuit(){
         return suit;
     }
 
+    // Getter method returning the color char of the Card.
     public char getColor() {
         return color;
     }
 
+    // Getter method returning the numeric value of the Card.
     public int getValue() {
         return value;
     }
 
+    // Returns a formatted String representation of the Card's face, including color!
     public String getFace(){
         String faceAsString = "";
 
