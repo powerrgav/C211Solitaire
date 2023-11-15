@@ -1,4 +1,25 @@
 package application;
+import java.util.ArrayList;
+import javafx.application.*;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.text.*;
+import javafx.scene.control.*;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.collections.ObservableList;
+import javafx.collections.FXCollections;
+import javafx.scene.control.ComboBox;
+import javafx.scene.layout.*;
 /*
  * C211 Solitaire Project Table class
  * Author: Gavin Power
@@ -9,16 +30,23 @@ package application;
  * All info regarding terms comes from:
  * https://solitaired.com/solitaire-terms
  */
-public class SolitaireTable {
+public class SolitaireTable extends Application {
 
     //set some static attributes
     private static int tableauColumns = 7;
     private static int foundations = 4;
     
-    //default constructor for the solitaire table
-    private SolitaireTable() 
-    {
-        //this comment is a test!
+    //display the stage, which is our "table"
+    @Override
+    public void start(Stage primaryStage){
+       
+        //create the pane used for the table
+        Button testBtn = new Button("test");
+        Scene scene = new Scene(testBtn, 200, 250);
+        primaryStage.setTitle("Team 8 Solitaire");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+        
     }
     
     //the tableau is the 7 columns of cards that comprise of the main area

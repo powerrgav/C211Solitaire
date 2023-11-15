@@ -1,9 +1,11 @@
 package application;
 import java.util.ArrayList;
+import javafx.application.*;
 
 public class Test {
     public static void main(String[] args) {
         testCard();
+        Application.launch(SolitaireTable.class, args);
     }
 
     //Tests functionality of the Card class.
