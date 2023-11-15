@@ -1,3 +1,4 @@
+package application;
 /*
  * C211 Solitaire Project Table class
  * Author: Gavin Power
@@ -8,7 +9,6 @@
  * All info regarding terms comes from:
  * https://solitaired.com/solitaire-terms
  */
-
 public class SolitaireTable {
 
     //set some static attributes
@@ -18,7 +18,7 @@ public class SolitaireTable {
     //default constructor for the solitaire table
     private SolitaireTable() 
     {
-        
+        //this comment is a test!
     }
     
     //the tableau is the 7 columns of cards that comprise of the main area
@@ -78,4 +78,5 @@ public class SolitaireTable {
         SolitaireTable.foundations = foundations;
     }
     
+
 }
