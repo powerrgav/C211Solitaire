@@ -1,5 +1,5 @@
 package application;
-import java.util.ArrayList;
+import java.util.*;
 import javafx.application.*;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -20,6 +20,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.*;
+import javafx.scene.canvas.*;
 /*
  * C211 Solitaire Project Table class
  * Author: Gavin Power
@@ -30,23 +31,19 @@ import javafx.scene.layout.*;
  * All info regarding terms comes from:
  * https://solitaired.com/solitaire-terms
  */
-public class SolitaireTable extends Application {
 
-    //set some static attributes
+public class SolitaireTable {
+
+    //set some attributes
     private static int tableauColumns = 7;
     private static int foundations = 4;
+    private final GraphicsContext theGraphics;
+    private Random random = new Random();
+    private final double cardWidth = 100, cardHeight = 150;
     
-    //display the stage, which is our "table"
-    @Override
-    public void start(Stage primaryStage){
-       
-        //create the pane used for the table
-        Button testBtn = new Button("test");
-        Scene scene = new Scene(testBtn, 200, 250);
-        primaryStage.setTitle("Team 8 Solitaire");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-        
+    //constructor to initialize the board
+    public SolitaireTable(GraphicsContext theGraphics) {
+        this.theGraphics = theGraphics;
     }
     
     //the tableau is the 7 columns of cards that comprise of the main area
