@@ -41,9 +41,10 @@ public class Test extends Application {
         
         Scene scene = new Scene(thePane, Color.DARKGREEN);
         
+        SolitaireTable theTable = new SolitaireTable(canvas.getGraphicsContext2D());
+        
         primaryStage.setTitle("Team 8 Solitaire");
         primaryStage.setScene(scene);
         primaryStage.show();
-        
     }
 }
