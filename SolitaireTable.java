@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -39,18 +40,20 @@ public class SolitaireTable {
     private static int foundations = 4;
     private GraphicsContext theGraphics;
     private Random random = new Random();
-    private static double cardWidth = 60;
-    private static double cardHeight = 100;
+    private static double cardWidth = 45;
+    private static double cardHeight = 80;
     
     //constructor to initialize the board
     SolitaireTable(GraphicsContext theGraphics) {
         this.theGraphics = theGraphics;
         foundations();
         wastePile();
+        tableau();
+        stockPile();
     }
     
     //create the arraylist of cards for the deck
-    public void createDeck() {
+    public ArrayList<Card> createDeck() {
       //Declare local variables.
         char[] SUITS = {'♣', '♦', '♥', '♠'};
         ArrayList<Card> deck = new ArrayList<>();
@@ -60,25 +63,88 @@ public class SolitaireTable {
             for(char currentSuit : SUITS)
                 deck.add(new Card(value, currentSuit));
         }
+        return deck;
     }
     
     //this method draws an empty place for a card to be placed
     //x and y refer to the coordinates the rectangle (empty place) is drawn at
-    public void emptyPlace(double x, double y) {
+    private void emptyPlace(double x, double y) {
         theGraphics.setStroke(Color.LIGHTGRAY);
         theGraphics.setLineWidth(1);
         theGraphics.strokeRect(x, y, cardWidth, cardHeight);
     }
     
-    //the tableau is the 7 columns of cards that comprise of the main area
-    public void tableau() 
+    //this method draws the back of a card
+    private void cardBack(double x, double y) {
+        //set the color of the card back
+        theGraphics.setFill(Color.CORNFLOWERBLUE);  
+        
+        //create a border around the card
+        theGraphics.setStroke(Color.WHITE);
+        theGraphics.setLineWidth(5);
+        theGraphics.fillRect(x, y, cardWidth, cardHeight);
+        theGraphics.strokeRect(x, y, cardWidth, cardHeight);
+    }
+    
+    private void cardFace(double x, double y) 
     {
+        //set the color of the card face
+        theGraphics.setFill(Color.WHITE);  
+        theGraphics.fillRect(x, y, cardWidth, cardHeight);
+        
+        //get a random card and write on the face of the card
+        int randCardFace = random.nextInt(52);
+        String valueAsString = Integer.toString(createDeck().get(randCardFace).value);
+        String suitAsString = Character.toString(createDeck().get(randCardFace).getSuit());
+    
+        
+        theGraphics.setTextAlign(TextAlignment.CENTER);
+        theGraphics.setTextBaseline(VPos.CENTER);
+        
+        if(createDeck().get(randCardFace).getColor() == 'B') 
+        {
+            theGraphics.setFill(Color.BLACK);
+        }
+        else 
+            theGraphics.setFill(Color.RED);
+        
+        theGraphics.setFont(new Font("BOLD", 20));
+        theGraphics.fillText(valueAsString, x+22.5, y+25, 25);
+        
+        if(createDeck().get(randCardFace).getSuit() == '♣') 
+        {
+            theGraphics.fillText(suitAsString, x+22.5, y+50);
+        }
+        else if(createDeck().get(randCardFace).getSuit() == '♦') 
+        {
+            theGraphics.fillText(suitAsString, x+22.5, y+50);
+        }
+        else if(createDeck().get(randCardFace).getSuit() == '♥') 
+        {
+            theGraphics.fillText(suitAsString, x+22.5, y+50);
+        }
+        else if(createDeck().get(randCardFace).getSuit() =='♠' ) 
+        {
+            theGraphics.fillText(suitAsString, x+22.5, y+50);
+        }
        
+    }
+    
+    
+    //the tableau is the 7 columns of cards that comprise of the main area
+    //at the start of the game, there are 28 cards on the tableau
+    private void tableau() 
+    {
+        //create some cards to test
+       cardFace(50,200);
+       cardFace(150,200);
+       cardFace(250,200);
+       cardFace(350,200);
     }
     
     //the foundations are the 4 piles upon which cards must be placed
     //to complete the game, starting with ace. One pile for each suit
-    public void foundations() 
+    private void foundations() 
     {
         //start the game with 4 empty places at the top right of the canvas
         //from left to right, the places are assigned club, diamond, heart, spade
@@ -90,13 +156,14 @@ public class SolitaireTable {
     
     //the stock is the pile of cards not currently in play, which are 
     //brought into play according to the rules.
-    public void stockPile() 
+    //at the start of the game, there are 24 cards in the stock pile
+    private void stockPile() 
     {
-        
+        cardBack(50,50);
     }
     
     //the waste pile is the pile of face up cards not put into play
-    public void wastePile() 
+    private void wastePile() 
     {
         //the waste pile should be empty at the start of the game
         emptyPlace(150,50);
