@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.*;
+import javafx.scene.shape.*;
 import javafx.scene.control.*;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -42,6 +43,10 @@ public class SolitaireTable {
     private Random random = new Random();
     private static double cardWidth = 45;
     private static double cardHeight = 80;
+    private static double spaceBetween = 30;
+    
+    //variables to store board and boundaries
+    private ArrayList<ArrayList<Card>> theTableau = new ArrayList<>();
     
     //constructor to initialize the board
     SolitaireTable(GraphicsContext theGraphics) {
@@ -135,11 +140,33 @@ public class SolitaireTable {
     //at the start of the game, there are 28 cards on the tableau
     private void tableau() 
     {
-        //create some cards to test
-       cardFace(50,200);
-       cardFace(150,200);
-       cardFace(250,200);
-       cardFace(350,200);
+        //logic to lay out the tableau
+        for(int i = 0; i < 7; i++) 
+        {
+            ArrayList<Card> stackOfCards = new ArrayList<>();
+            for(int j = 0 ; j < i + 1; j++) 
+            {
+                stackOfCards.add(null);
+            }
+            theTableau.add(stackOfCards);
+        }
+        
+        //draw the tableau
+        for(int i = 0; i < 7; i++) 
+        {
+            double x = spaceBetween + (cardWidth + spaceBetween) * i + 100;
+            ArrayList<Card> tableauColumn = theTableau.get(i);
+            if(tableauColumn.isEmpty()) {
+                emptyPlace(x, spaceBetween * 2 + cardHeight);
+            }else 
+            {
+                for(int j = 0; j < tableauColumn.size(); j++) {
+                    double y = spaceBetween * (2 + j) + cardHeight + 30;
+                    
+                    cardFace(x, y);
+                }
+            }
+        }
     }
     
     //the foundations are the 4 piles upon which cards must be placed
