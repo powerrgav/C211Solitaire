@@ -143,9 +143,11 @@ public class SolitaireTable {
         //logic to lay out the tableau
         for(int i = 0; i < 7; i++) 
         {
+            //create an arraylist to use to make the cards appear
             ArrayList<Card> stackOfCards = new ArrayList<>();
             for(int j = 0 ; j < i + 1; j++) 
             {
+                //leave this null for now
                 stackOfCards.add(null);
             }
             theTableau.add(stackOfCards);
@@ -154,14 +156,17 @@ public class SolitaireTable {
         //draw the tableau
         for(int i = 0; i < 7; i++) 
         {
-            double x = spaceBetween + (cardWidth + spaceBetween) * i + 100;
+            double x = (cardWidth * 1.5 + spaceBetween) * i + 100;
+            //create an arraylist that makes the vertical columns
             ArrayList<Card> tableauColumn = theTableau.get(i);
+            
             if(tableauColumn.isEmpty()) {
+                //this y value is a placeholder for now, subject to change
                 emptyPlace(x, spaceBetween * 2 + cardHeight);
             }else 
             {
                 for(int j = 0; j < tableauColumn.size(); j++) {
-                    double y = spaceBetween * (2 + j) + cardHeight + 30;
+                    double y = spaceBetween * j + 175;
                     
                     cardFace(x, y);
                 }
