@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.VPos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -37,8 +38,6 @@ import javafx.scene.canvas.*;
 public class SolitaireTable {
 
     //set some attributes
-    private static int tableauColumns = 7;
-    private static int foundations = 4;
     private GraphicsContext theGraphics;
     private Random random = new Random();
     private static double cardWidth = 45;
@@ -46,29 +45,43 @@ public class SolitaireTable {
     private static double spaceBetween = 30;
     
     //variables to store board and boundaries
+    private ArrayList<Card> waste = new ArrayList<>();
+    private ArrayList<ArrayList<Card>> foundations = new ArrayList<>();
     private ArrayList<ArrayList<Card>> theTableau = new ArrayList<>();
+    public ArrayList <BoundingBox> tableauBounds = new ArrayList<>();
+    public ArrayList <BoundingBox> foundationsBounds = new ArrayList<>();
+    public BoundingBox wasteBounds = new BoundingBox (150, 50, cardWidth, cardHeight);
+    public BoundingBox stockBounds = new BoundingBox(50, 50, cardWidth, cardHeight);
     
     //constructor to initialize the board
     SolitaireTable(GraphicsContext theGraphics) {
         this.theGraphics = theGraphics;
+        shuffle();
         foundations();
         wastePile();
         tableau();
         stockPile();
     }
-    
+
     //create the arraylist of cards for the deck
     public ArrayList<Card> createDeck() {
-      //Declare local variables.
+        //Declare local variables.
         char[] SUITS = {'♣', '♦', '♥', '♠'};
-        ArrayList<Card> deck = new ArrayList<>();
-
+        ArrayList <Card> deck = new ArrayList<>();
+        
         //Populate deck with cards.
         for(int value = 1; value < 14; value++){
             for(char currentSuit : SUITS)
                 deck.add(new Card(value, currentSuit));
         }
         return deck;
+    }
+    
+    //I'm not totally sure why, but shuffling the deck inside createDeck
+    //messes up the colors of the cards.
+    private Card shuffle() {
+        int r = random.nextInt(52);
+        return createDeck().get(r);
     }
     
     //this method draws an empty place for a card to be placed
@@ -91,22 +104,21 @@ public class SolitaireTable {
         theGraphics.strokeRect(x, y, cardWidth, cardHeight);
     }
     
-    private void cardFace(double x, double y) 
+    private void cardFace(double x, double y, Card card) 
     {
         //set the color of the card face
         theGraphics.setFill(Color.WHITE);  
         theGraphics.fillRect(x, y, cardWidth, cardHeight);
         
-        //get a random card and write on the face of the card
-        int randCardFace = random.nextInt(52);
-        String valueAsString = Integer.toString(createDeck().get(randCardFace).value);
-        String suitAsString = Character.toString(createDeck().get(randCardFace).getSuit());
+        //get a card and write on the face of the card
+        String valueAsString = Integer.toString(card.getValue());
+        String suitAsString = Character.toString(card.getSuit());
     
         
         theGraphics.setTextAlign(TextAlignment.CENTER);
         theGraphics.setTextBaseline(VPos.CENTER);
         
-        if(createDeck().get(randCardFace).getColor() == 'B') 
+        if(card.getColor() == 'B') 
         {
             theGraphics.setFill(Color.BLACK);
         }
@@ -116,19 +128,19 @@ public class SolitaireTable {
         theGraphics.setFont(new Font("BOLD", 20));
         theGraphics.fillText(valueAsString, x+22.5, y+25, 25);
         
-        if(createDeck().get(randCardFace).getSuit() == '♣') 
+        if(card.getSuit() == '♣') 
         {
             theGraphics.fillText(suitAsString, x+22.5, y+50);
         }
-        else if(createDeck().get(randCardFace).getSuit() == '♦') 
+        else if(card.getSuit() == '♦') 
         {
             theGraphics.fillText(suitAsString, x+22.5, y+50);
         }
-        else if(createDeck().get(randCardFace).getSuit() == '♥') 
+        else if(card.getSuit() == '♥') 
         {
             theGraphics.fillText(suitAsString, x+22.5, y+50);
         }
-        else if(createDeck().get(randCardFace).getSuit() =='♠' ) 
+        else if(card.getSuit() =='♠' ) 
         {
             theGraphics.fillText(suitAsString, x+22.5, y+50);
         }
@@ -147,7 +159,7 @@ public class SolitaireTable {
             ArrayList<Card> stackOfCards = new ArrayList<>();
             for(int j = 0 ; j < i + 1; j++) 
             {
-                //leave this null for now
+              //leave this null for now
                 stackOfCards.add(null);
             }
             theTableau.add(stackOfCards);
@@ -168,7 +180,7 @@ public class SolitaireTable {
                 for(int j = 0; j < tableauColumn.size(); j++) {
                     double y = spaceBetween * j + 175;
                     
-                    cardFace(x, y);
+                    cardFace(x, y, shuffle());
                 }
             }
         }
@@ -200,38 +212,4 @@ public class SolitaireTable {
         //the waste pile should be empty at the start of the game
         emptyPlace(150,50);
     }
-    
-    //---------------------------------------------------------------------
-    //separating the get/set methods from the rest of the class for easier reading
-    //---------------------------------------------------------------------
-    
-    /**
-     * @return the tableauColumns
-     */
-    public int getTableauColumns() {
-        return tableauColumns;
-    }
-
-    /**
-     * @param tableauColumns the tableauColumns to set
-     */
-    public void setTableauColumns(int tableauColumns) {
-        SolitaireTable.tableauColumns = tableauColumns;
-    }
-
-    /**
-     * @return the foundations
-     */
-    public int getFoundations() {
-        return foundations;
-    }
-
-    /**
-     * @param foundations the foundations to set
-     */
-    public void setFoundations(int foundations) {
-        SolitaireTable.foundations = foundations;
-    }
-    
-
 }
