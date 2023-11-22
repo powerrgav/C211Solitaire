@@ -45,6 +45,7 @@ public class SolitaireTable {
     private static double spaceBetween = 30;
     
     //variables to store board and boundaries
+    private  ArrayList <Card> deck = new ArrayList<>();
     private ArrayList<Card> waste = new ArrayList<>();
     private ArrayList<ArrayList<Card>> foundations = new ArrayList<>();
     private ArrayList<ArrayList<Card>> theTableau = new ArrayList<>();
@@ -56,7 +57,7 @@ public class SolitaireTable {
     //constructor to initialize the board
     SolitaireTable(GraphicsContext theGraphics) {
         this.theGraphics = theGraphics;
-        shuffle();
+        shuffledDeck();
         foundations();
         wastePile();
         tableau();
@@ -66,8 +67,7 @@ public class SolitaireTable {
     //create the arraylist of cards for the deck
     public ArrayList<Card> createDeck() {
         //Declare local variables.
-        char[] SUITS = {'♣', '♦', '♥', '♠'};
-        ArrayList <Card> deck = new ArrayList<>();
+        char[] SUITS = {'♣', '♦', '♥', '♠'};   
         
         //Populate deck with cards.
         for(int value = 1; value < 14; value++){
@@ -79,9 +79,14 @@ public class SolitaireTable {
     
     //I'm not totally sure why, but shuffling the deck inside createDeck
     //messes up the colors of the cards.
-    private Card shuffle() {
-        int r = random.nextInt(52);
-        return createDeck().get(r);
+    private ArrayList<Card> shuffledDeck() {
+        Collections.shuffle(createDeck());
+        return deck; 
+    }
+    
+    //this method returns and removes the last card in the arraylist
+    private Card getTopCard() {
+        return deck.remove(deck.size()-1);
     }
     
     //this method draws an empty place for a card to be placed
@@ -155,12 +160,12 @@ public class SolitaireTable {
         //logic to lay out the tableau
         for(int i = 0; i < 7; i++) 
         {
+            
             //create an arraylist to use to make the cards appear
             ArrayList<Card> stackOfCards = new ArrayList<>();
             for(int j = 0 ; j < i + 1; j++) 
             {
-              //leave this null for now
-                stackOfCards.add(null);
+                stackOfCards.add(getTopCard());
             }
             theTableau.add(stackOfCards);
         }
@@ -178,9 +183,10 @@ public class SolitaireTable {
             }else 
             {
                 for(int j = 0; j < tableauColumn.size(); j++) {
+                    Card card = tableauColumn.get(j);
                     double y = spaceBetween * j + 175;
                     
-                    cardFace(x, y, shuffle());
+                    cardFace(x, y, card);
                 }
             }
         }
