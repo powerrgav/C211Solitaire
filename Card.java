@@ -13,6 +13,7 @@ public class Card {
     final int value;
     final char suit;
     final char color;
+    private boolean revealed = false;
 
     // Constructor to create Card object of a specific suit and value.
     Card(int val, char suitChar){
@@ -22,6 +23,14 @@ public class Card {
             color = 'B';
         else
             color = 'R';
+    }
+    
+    public void setRevealed() {
+        revealed = true;
+    }
+    
+    public boolean getRevealed() {
+        return revealed;
     }
 
     // Getter method returning the suit char of the Card.

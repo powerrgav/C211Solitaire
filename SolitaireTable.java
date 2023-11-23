@@ -1,28 +1,9 @@
 package application;
 import java.util.*;
-import javafx.application.*;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.text.*;
-import javafx.scene.shape.*;
-import javafx.scene.control.*;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.VPos;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
-import javafx.scene.control.ComboBox;
-import javafx.scene.layout.*;
 import javafx.scene.canvas.*;
 /*
  * C211 Solitaire Project Table class
@@ -39,7 +20,6 @@ public class SolitaireTable {
 
     //set some attributes
     private GraphicsContext theGraphics;
-    private Random random = new Random();
     private static double cardWidth = 45;
     private static double cardHeight = 80;
     private static double spaceBetween = 30;
@@ -49,7 +29,7 @@ public class SolitaireTable {
     private ArrayList<Card> waste = new ArrayList<>();
     private ArrayList<ArrayList<Card>> foundations = new ArrayList<>();
     private ArrayList<ArrayList<Card>> theTableau = new ArrayList<>();
-    public ArrayList <BoundingBox> tableauBounds = new ArrayList<>();
+    public ArrayList<ArrayList<BoundingBox>>tableauBounds = new ArrayList<>();
     public ArrayList <BoundingBox> foundationsBounds = new ArrayList<>();
     public BoundingBox wasteBounds = new BoundingBox (150, 50, cardWidth, cardHeight);
     public BoundingBox stockBounds = new BoundingBox(50, 50, cardWidth, cardHeight);
@@ -152,7 +132,6 @@ public class SolitaireTable {
        
     }
     
-    
     //the tableau is the 7 columns of cards that comprise of the main area
     //at the start of the game, there are 28 cards on the tableau
     private void tableau() 
@@ -181,13 +160,40 @@ public class SolitaireTable {
                 //this y value is a placeholder for now, subject to change
                 emptyPlace(x, spaceBetween * 2 + cardHeight);
             }else 
+                
             {
                 for(int j = 0; j < tableauColumn.size(); j++) {
                     Card card = tableauColumn.get(j);
+                    Card topCard = tableauColumn.get(tableauColumn.size()-1);
+                    topCard.setRevealed();
+                    
                     double y = spaceBetween * j + 175;
                     
-                    cardFace(x, y, card);
+                    if(card.getRevealed()) {
+                        cardFace(x, y, card);
+                    }else 
+                        
+                    {
+                        cardBack(x , y);
+                    }
                 }
+            }
+        }
+        
+        //declare the bounds for each tableau card
+        //bounding box is declared by (x , y , width , height)
+        //the x and y for each boundary are the same as x and y 
+        //in the previous for loop in this method
+        for(int i = 0; i < 7; i++) {
+            tableauBounds.add(new ArrayList<>());
+            ArrayList<Card> columns = theTableau.get(i);
+            
+            tableauBounds.get(i).add(new BoundingBox((cardWidth * 1.5 + spaceBetween) * i + 100,
+                    spaceBetween * 2 + cardHeight, cardWidth, cardHeight));
+            
+            for(int j = 1; j < columns.size(); j++) {
+                tableauBounds.get(i).add(new BoundingBox((cardWidth * 1.5 + spaceBetween) * i + 100,
+                        spaceBetween * j + 175, cardWidth, cardHeight ));
             }
         }
     }
@@ -197,11 +203,18 @@ public class SolitaireTable {
     private void foundations() 
     {
         //start the game with 4 empty places at the top right of the canvas
-        //from left to right, the places are assigned club, diamond, heart, spade
-        emptyPlace(400,50);
-        emptyPlace(500,50);
-        emptyPlace(600,50);
-        emptyPlace(700,50);
+        for(int i = 0; i < 4; i++) {
+            
+          //declare clickable area in the foundations
+            foundationsBounds.add(new BoundingBox(spaceBetween*3*(3+i) +150, 
+                    spaceBetween, cardWidth, cardHeight));
+            
+            double x = spaceBetween*3*(3+i) +150;
+
+            emptyPlace(x,50);
+            
+            //to add: moving card from board to foundations
+        }
     }
     
     //the stock is the pile of cards not currently in play, which are 
@@ -209,13 +222,20 @@ public class SolitaireTable {
     //at the start of the game, there are 24 cards in the stock pile
     private void stockPile() 
     {
-        cardBack(50,50);
+        if(deck.isEmpty()) {
+            emptyPlace(50,50);
+        }else {
+            cardBack(50,50);
+        }
     }
     
     //the waste pile is the pile of face up cards not put into play
     private void wastePile() 
     {
-        //the waste pile should be empty at the start of the game
-        emptyPlace(150,50);
+        if(waste.isEmpty()) {
+            emptyPlace(150,50);
+        }else {
+            cardFace(150,50, getTopCard());
+        }
     }
-}
+}//end class
