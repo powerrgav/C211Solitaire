@@ -14,6 +14,9 @@ import javafx.scene.canvas.*;
  * 
  * All info regarding terms comes from:
  * https://solitaired.com/solitaire-terms
+ * 
+ * BoundingBox and GraphicsContext were learned from Java Oracle Docs.
+ * https://docs.oracle.com/javase/8/javafx/api/toc.htm
  */
 
 public class SolitaireTable {
@@ -104,10 +107,11 @@ public class SolitaireTable {
         String valueAsString = Integer.toString(card.getValue());
         String suitAsString = Character.toString(card.getSuit());
     
-        
+        //Ensure the graphics are in the center of the card
         theGraphics.setTextAlign(TextAlignment.CENTER);
         theGraphics.setTextBaseline(VPos.CENTER);
         
+        //Set the color of the card based on its attribute in Card
         if(card.getColor() == 'B') 
         {
             theGraphics.setFill(Color.BLACK);
@@ -115,9 +119,11 @@ public class SolitaireTable {
         else 
             theGraphics.setFill(Color.RED);
         
+        //Set our font
         theGraphics.setFont(new Font("BOLD", 20));
         theGraphics.fillText(valueAsString, x+22.5, y+25, 25);
         
+        //Draw the text onto the card
         if(card.getSuit() == '♣') 
         {
             theGraphics.fillText(suitAsString, x+22.5, y+50);
@@ -141,16 +147,22 @@ public class SolitaireTable {
     //at the start of the game, there are 28 cards on the tableau
     private void tableau() 
     {
+        
         //logic to lay out the tableau
         for(int i = 0; i < 7; i++) 
         {
             
             //create an arraylist to use to make the cards appear
             ArrayList<Card> stackOfCards = new ArrayList<>();
+            
+            //we want j to be less than i + 1 because, at the start of the game,
+            //the very first column on the tableau (index 0) will start with one card.
             for(int j = 0 ; j < i + 1; j++) 
             {
+                //get the top card off of the deck
                 stackOfCards.add(getTopCard());
             }
+            //add each stack of cards on the tableau to the tableau
             theTableau.add(stackOfCards);
         }
         
@@ -165,15 +177,19 @@ public class SolitaireTable {
                 //this y value is a placeholder for now, subject to change
                 emptyPlace(x, spaceBetween * 2 + cardHeight);
             }else 
-                
-            {
+            {               
                 for(int j = 0; j < tableauColumn.size(); j++) {
+                    //create two cards. one to be drawn as revealed and one hidden
                     Card card = tableauColumn.get(j);
                     Card topCard = tableauColumn.get(tableauColumn.size()-1);
                     topCard.setRevealed();
                     
                     double y = spaceBetween * j + 175;
                     
+                    //add an assert statement to make sure we're on the right track
+                    assert(!card.getRevealed());
+                    
+                    //if a card is marked as revealed, show its face. if not, its back.
                     if(card.getRevealed()) {
                         cardFace(x, y, card);
                     }else 
@@ -190,6 +206,9 @@ public class SolitaireTable {
         //the x and y for each boundary are the same as x and y 
         //in the previous for loop in this method
         for(int i = 0; i < 7; i++) {
+            
+            //we need multiple dimensions for the ArrayList because we have multiple columns
+            //that need a boundary
             tableauBounds.add(new ArrayList<>());
             ArrayList<Card> columns = theTableau.get(i);
             
@@ -224,6 +243,7 @@ public class SolitaireTable {
     //at the start of the game, there are 24 cards in the stock pile
     private void stockPile() 
     {
+        //draws an empty place is the deck is empty, a card back if there are cards remianing
         if(deck.isEmpty()) {
             emptyPlace(50,50);
         }else {
@@ -234,6 +254,7 @@ public class SolitaireTable {
     //the waste pile is the pile of face up cards not put into play
     private void wastePile() 
     {
+        //draws an empty place is the deck is empty, a card face if there are cards remianing
         if(waste.isEmpty()) {
             emptyPlace(150,50);
         }else {
