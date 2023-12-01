@@ -157,7 +157,7 @@ public class SolitaireTable {
         //draw the tableau
         for(int i = 0; i < 7; i++) 
         {
-            double x = (cardWidth * 1.5 + spaceBetween) * i + 100;
+            double x = 100 * i + 75;
             //create an arraylist that makes the vertical columns
             ArrayList<Card> tableauColumn = theTableau.get(i);
             
@@ -193,12 +193,10 @@ public class SolitaireTable {
             tableauBounds.add(new ArrayList<>());
             ArrayList<Card> columns = theTableau.get(i);
             
-            tableauBounds.get(i).add(new BoundingBox((cardWidth * 1.5 + spaceBetween) * i + 100,
-                    spaceBetween * 2 + cardHeight, cardWidth, cardHeight));
+            tableauBounds.get(i).add(new BoundingBox(100 * i + 75, spaceBetween * 2 + cardHeight, cardWidth, cardHeight));
             
             for(int j = 1; j < columns.size(); j++) {
-                tableauBounds.get(i).add(new BoundingBox((cardWidth * 1.5 + spaceBetween) * i + 100,
-                        spaceBetween * j + 175, cardWidth, cardHeight ));
+                tableauBounds.get(i).add(new BoundingBox(100 * i + 75, spaceBetween * j + 175, cardWidth, cardHeight ));
             }
         }
     }
@@ -211,10 +209,9 @@ public class SolitaireTable {
         for(int i = 0; i < 4; i++) {
             
           //declare clickable area in the foundations
-            foundationsBounds.add(new BoundingBox(spaceBetween*3*(3+i) +150, 
-                    spaceBetween, cardWidth, cardHeight));
+            foundationsBounds.add(new BoundingBox(100 *i + 400, spaceBetween, cardWidth, cardHeight));
             
-            double x = spaceBetween*3*(3+i) +150;
+            double x = 100 *i + 400;
 
             emptyPlace(x,50);
             
