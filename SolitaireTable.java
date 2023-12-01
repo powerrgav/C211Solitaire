@@ -43,6 +43,11 @@ public class SolitaireTable {
         tableau();
         stockPile();
     }
+    
+    //default constructor
+    SolitaireTable(){
+        
+    }
 
     //create the arraylist of cards for the deck
     public ArrayList<Card> createDeck() {
@@ -237,5 +242,38 @@ public class SolitaireTable {
         }else {
             cardFace(150,50, getTopCard());
         }
+    }
+    
+    //--------------------------------------------------------
+    //----------------------some get methods------------------
+    //--------------------------------------------------------
+    
+
+    /**
+     * @return the tableauBounds
+     */
+    public ArrayList<ArrayList<BoundingBox>> getTableauBounds() {
+        return tableauBounds;
+    }
+
+    /**
+     * @return the foundationsBounds
+     */
+    public ArrayList<BoundingBox> getFoundationsBounds() {
+        return foundationsBounds;
+    }
+
+    /**
+     * @return the wasteBounds
+     */
+    public BoundingBox getWasteBounds() {
+        return wasteBounds;
+    }
+
+    /**
+     * @return the stockBounds
+     */
+    public BoundingBox getStockBounds() {
+        return stockBounds;
     }
 }//end class
