@@ -1,4 +1,5 @@
 package application;
+import java.awt.event.ActionListener;
 import java.util.*;
 import javafx.scene.text.*;
 import javafx.geometry.BoundingBox;
@@ -36,6 +37,7 @@ public class SolitaireTable {
     public ArrayList <BoundingBox> foundationsBounds = new ArrayList<>();
     public BoundingBox wasteBounds = new BoundingBox (150, 50, cardWidth, cardHeight);
     public BoundingBox stockBounds = new BoundingBox(50, 50, cardWidth, cardHeight);
+
     
     //constructor to initialize the board
     SolitaireTable(GraphicsContext theGraphics) {

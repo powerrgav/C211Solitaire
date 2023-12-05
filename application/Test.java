@@ -1,8 +1,12 @@
 package application;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javafx.application.*;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -38,12 +42,26 @@ public class Test extends Application {
         Canvas canvas = new Canvas (800, 500);
         
         Pane thePane = new Pane(canvas);
+
+
         
         Scene scene = new Scene(thePane, Color.DARKGREEN);
+
         
         SolitaireTable theTable = new SolitaireTable(canvas.getGraphicsContext2D());
+
+        User testUser = new User(theTable);
+
         
         primaryStage.setTitle("Team 8 Solitaire");
+
+        scene.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                testUser.mouseClickEvents(mouseEvent);
+            }
+        });
+
         primaryStage.setScene(scene);
         primaryStage.show();
     }
