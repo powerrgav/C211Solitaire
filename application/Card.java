@@ -14,6 +14,7 @@ public class Card {
     final char suit;
     final char color;
     private boolean revealed = false;
+    private boolean selected = false;
 
     // Constructor to create Card object of a specific suit and value.
     Card(int val, char suitChar){
@@ -25,14 +26,28 @@ public class Card {
             color = 'R';
     }
     
+    //Get and set methods for the revealed attribute
+    public boolean getRevealed() {
+        return revealed;
+    }
+    
     public void setRevealed() {
         revealed = true;
     }
     
-    public boolean getRevealed() {
-        return revealed;
+    //Get and set methods for the selected attribute
+    public boolean getSelected() {
+        return selected;
+    }
+    
+    public void setSelected() {
+        selected = true;
     }
 
+    public void setSelectedFalse() {
+        selected = false;
+    }
+    
     // Getter method returning the suit char of the Card.
     public char getSuit(){
         return suit;

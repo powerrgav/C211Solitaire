@@ -38,7 +38,6 @@ public class SolitaireTable {
     public ArrayList <BoundingBox> foundationsBounds = new ArrayList<>();
     public BoundingBox wasteBounds = new BoundingBox (150, 50, cardWidth, cardHeight);
     public BoundingBox stockBounds = new BoundingBox(50, 50, cardWidth, cardHeight);
-
     
     //constructor to initialize the board
     SolitaireTable(GraphicsContext theGraphics) {
@@ -53,7 +52,7 @@ public class SolitaireTable {
     //default constructor
     SolitaireTable(){
         
-    }
+    } 
 
     //create the arraylist of cards for the deck
     public ArrayList<Card> createDeck() {
@@ -142,6 +141,15 @@ public class SolitaireTable {
         else if(card.getSuit() =='♠' ) 
         {
             theGraphics.fillText(suitAsString, x+22.5, y+50);
+        }
+        
+        
+        //if the card is selected, draw a border indicating it.
+        if(card.getSelected() == true) {
+            theGraphics.setStroke(Color.GOLD);
+            theGraphics.setLineWidth(5);
+            theGraphics.fillRect(x, y, cardWidth, cardHeight);
+            theGraphics.strokeRect(x, y, cardWidth, cardHeight);
         }
        
     }
@@ -246,15 +254,23 @@ public class SolitaireTable {
     //at the start of the game, there are 24 cards in the stock pile
     private void stockPile() 
     {
-        //draws an empty place is the deck is empty, a card back if there are cards remianing
+      //draws an empty place is the deck is empty, a card back if there are cards remianing
         if(deck.isEmpty()) {
+            //redraw over the card back bug
+            theGraphics.setFill(Color.DARKGREEN);
+            theGraphics.fillRect(45, 45, cardWidth+15, cardHeight+15);
             emptyPlace(50,50);
+            
             System.out.println("End of deck");
+            
         }else if(deck.get(deck.size() - 1).getRevealed() == false) {
             cardBack(50,50);
-        }else{
+        }else
+        {
             cardFace(50, 50, deck.get(deck.size() - 1));
         }
+
+
     }
     
     //the waste pile is the pile of face up cards not put into play
