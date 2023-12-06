@@ -1,5 +1,6 @@
 package application;
 import java.awt.event.ActionListener;
+import java.security.cert.TrustAnchor;
 import java.util.*;
 import javafx.scene.text.*;
 import javafx.geometry.BoundingBox;
@@ -106,7 +107,7 @@ public class SolitaireTable {
         theGraphics.fillRect(x, y, cardWidth, cardHeight);
         
         //get a card and write on the face of the card
-        String valueAsString = Integer.toString(card.getValue());
+        String valueAsString = card.getFaceValue();
         String suitAsString = Character.toString(card.getSuit());
     
         //Ensure the graphics are in the center of the card
@@ -248,8 +249,11 @@ public class SolitaireTable {
         //draws an empty place is the deck is empty, a card back if there are cards remianing
         if(deck.isEmpty()) {
             emptyPlace(50,50);
-        }else {
+            System.out.println("End of deck");
+        }else if(deck.get(deck.size() - 1).getRevealed() == false) {
             cardBack(50,50);
+        }else{
+            cardFace(50, 50, deck.get(deck.size() - 1));
         }
     }
     
@@ -258,9 +262,10 @@ public class SolitaireTable {
     {
         //draws an empty place is the deck is empty, a card face if there are cards remianing
         if(waste.isEmpty()) {
+            System.out.println("Waste pile is empty");
             emptyPlace(150,50);
         }else {
-            cardFace(150,50, getTopCard());
+            cardFace(150,50, waste.get(waste.size() - 1));
         }
     }
     
@@ -295,5 +300,47 @@ public class SolitaireTable {
      */
     public BoundingBox getStockBounds() {
         return stockBounds;
+    }
+
+    public boolean isPileEmpty(int pileToCheck){
+            if(pileToCheck == 0)
+                return deck.isEmpty();
+            else if (pileToCheck == 1)
+                return waste.isEmpty();
+            else if (pileToCheck >= 2 && pileToCheck <= 5)
+                return foundations.get(pileToCheck - 2).isEmpty();
+            else if(pileToCheck >= 6 && pileToCheck < 10 )
+                return theTableau.get(pileToCheck - 6).isEmpty();
+            else{
+                System.out.println("Something went horribly wrong!");
+                return false;
+            }
+    }
+
+    public void flipCard(Integer intendedPile){
+        if(intendedPile == 0){
+            if(!deck.isEmpty()) {
+                deck.get(deck.size() - 1).setRevealed();
+                stockPile();
+            }
+        }
+        else if (intendedPile > 5 && intendedPile < 10){
+            foundations.get(intendedPile - 6).get(foundations.get(intendedPile - 6).size() - 1).setRevealed();
+            foundations();
+
+        }
+    }
+
+    public void alphaDeckToDiscard(){
+        if(deck.isEmpty()) {
+            stockPile();
+            return;
+        }
+        else if(!deck.get(deck.size() - 1).getRevealed())
+            return;
+
+        waste.add(getTopCard());
+        wastePile();
+        stockPile();
     }
 }//end class

@@ -48,6 +48,22 @@ public class Card {
         return value;
     }
 
+    public String getFaceValue(){
+        if(value > 1 && value < 11)
+            return String.valueOf(value);
+        else{
+            String faceAsString;
+            faceAsString = switch (value){
+                case 1 -> "A";
+                case 11 -> "J";
+                case 12 -> "Q";
+                case 13 -> "K";
+                default -> "";
+            };
+            return faceAsString;
+        }
+    }
+
     // Returns a formatted String representation of the Card's face, including color!
     public String getFace(){
         String faceAsString = "";
