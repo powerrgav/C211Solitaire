@@ -38,21 +38,58 @@ public class SolitaireTable {
     public ArrayList <BoundingBox> foundationsBounds = new ArrayList<>();
     public BoundingBox wasteBounds = new BoundingBox (150, 50, cardWidth, cardHeight);
     public BoundingBox stockBounds = new BoundingBox(50, 50, cardWidth, cardHeight);
+
+    private ArrayList<Card>[] decksAsData;
+
+    private BoundingBox[] decksAsObjects;
     
     //constructor to initialize the board
     SolitaireTable(GraphicsContext theGraphics) {
         this.theGraphics = theGraphics;
+        for(int i = 0; i < 4; i++)
+            foundations.add(new ArrayList<>());
         shuffledDeck();
         foundations();
         wastePile();
         tableau();
         stockPile();
+        setDecksAsData();
+
     }
     
     //default constructor
     SolitaireTable(){
         
-    } 
+    }
+
+    private void setDecksAsData(){
+        decksAsData = new ArrayList[13];
+        decksAsData[0] = deck;
+        decksAsData[1] = waste;
+        decksAsData[2] = foundations.get(0);
+        decksAsData[3] = foundations.get(1);
+        decksAsData[4] = foundations.get(2);
+        decksAsData[5] = foundations.get(3);
+        decksAsData[6] = theTableau.get(0);
+        decksAsData[7] = theTableau.get(1);
+        decksAsData[8] = theTableau.get(2);
+        decksAsData[9] = theTableau.get(3);
+        decksAsData[10] = theTableau.get(4);
+        decksAsData[11] = theTableau.get(5);
+        decksAsData[12] = theTableau.get(6);
+
+    }
+
+    private void setDecksAsObjects(){
+        decksAsObjects = new BoundingBox[13];
+        decksAsObjects[0] = stockBounds;
+        decksAsObjects[1] = wasteBounds;
+        decksAsObjects[2] = wasteBounds;
+        decksAsObjects[3] = foundationsBounds.get(0);
+        decksAsObjects[4] = foundationsBounds.get(1);
+        decksAsObjects[5] = foundationsBounds.get(2);
+        decksAsObjects[6] = foundationsBounds.get(3);
+    }
 
     //create the arraylist of cards for the deck
     public ArrayList<Card> createDeck() {
@@ -142,8 +179,8 @@ public class SolitaireTable {
         {
             theGraphics.fillText(suitAsString, x+22.5, y+50);
         }
-        
-        
+
+
         //if the card is selected, draw a border indicating it.
         if(card.getSelected() == true) {
             theGraphics.setStroke(Color.GOLD);
@@ -151,7 +188,7 @@ public class SolitaireTable {
             theGraphics.fillRect(x, y, cardWidth, cardHeight);
             theGraphics.strokeRect(x, y, cardWidth, cardHeight);
         }
-       
+
     }
     
     //the tableau is the 7 columns of cards that comprise of the main area
@@ -254,23 +291,19 @@ public class SolitaireTable {
     //at the start of the game, there are 24 cards in the stock pile
     private void stockPile() 
     {
-      //draws an empty place is the deck is empty, a card back if there are cards remianing
+        //draws an empty place is the deck is empty, a card back if there are cards remianing
         if(deck.isEmpty()) {
             //redraw over the card back bug
             theGraphics.setFill(Color.DARKGREEN);
             theGraphics.fillRect(45, 45, cardWidth+15, cardHeight+15);
             emptyPlace(50,50);
-            
+
             System.out.println("End of deck");
-            
         }else if(deck.get(deck.size() - 1).getRevealed() == false) {
             cardBack(50,50);
-        }else
-        {
+        }else{
             cardFace(50, 50, deck.get(deck.size() - 1));
         }
-
-
     }
     
     //the waste pile is the pile of face up cards not put into play
@@ -334,14 +367,16 @@ public class SolitaireTable {
     }
 
     public void flipCard(Integer intendedPile){
+        System.out.println("intendedPile is: " + intendedPile);
         if(intendedPile == 0){
             if(!deck.isEmpty()) {
-                deck.get(deck.size() - 1).setRevealed();
+                decksAsData[intendedPile].get(decksAsData[intendedPile].size() - 1).setRevealed();
+
                 stockPile();
             }
         }
         else if (intendedPile > 5 && intendedPile < 10){
-            foundations.get(intendedPile - 6).get(foundations.get(intendedPile - 6).size() - 1).setRevealed();
+            decksAsData[intendedPile].get(decksAsData[intendedPile].size() - 1).setRevealed();
             foundations();
 
         }
@@ -358,5 +393,53 @@ public class SolitaireTable {
         waste.add(getTopCard());
         wastePile();
         stockPile();
+    }
+
+    public Card checkTopCard(Integer intendedPile){
+        if(!decksAsData[intendedPile].isEmpty())
+            return decksAsData[intendedPile].get(decksAsData[intendedPile].size() - 1);
+        else
+            return null;
+    }
+
+    public boolean pileHasCards(Integer intendedPile){
+        return !decksAsData[intendedPile].isEmpty();
+    }
+
+    public boolean cardVisible(Integer intendedPile){
+        return decksAsData[intendedPile].get(decksAsData[intendedPile].size() - 1).getRevealed();
+    }
+
+    public void moveCardAcrossPiles(Integer sendingPile, Integer receivingPile){
+        decksAsData[receivingPile].add(decksAsData[sendingPile].remove(decksAsData[sendingPile].size() - 1));
+        redrawScreen();
+    }
+
+    public void movePileAcrossPile(Integer sendingPile, Integer receivingPile){
+        while(!decksAsData[sendingPile].isEmpty())
+            decksAsData[receivingPile].add(decksAsData[receivingPile].remove(0));
+        redrawScreen();
+    }
+
+    public boolean matchingSuit(Integer sendingPile, Integer receivingPile){
+        return checkTopCard(sendingPile).suit == checkTopCard(receivingPile).suit;
+    }
+
+    public boolean matchingColor(Integer sendingPile, Integer receivingPile){
+        return checkTopCard(sendingPile).color == checkTopCard(receivingPile).color;
+    }
+
+    public boolean inOrder(Integer sendingPile, Integer receivingPile, boolean ascending){
+        if(ascending)
+            return (checkTopCard(sendingPile).value - checkTopCard(receivingPile).value == 1);
+        else
+            return (checkTopCard(sendingPile).value - checkTopCard(receivingPile).value == -1);
+    }
+
+    public void redrawScreen(){
+        //tableau();
+        foundations();
+        stockPile();
+        wastePile();
     }
 }//end class
