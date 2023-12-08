@@ -284,6 +284,8 @@ public class SolitaireTable {
             emptyPlace(x,50);
         }
         
+        //redraw the foundations after a change is made. pretty much the same as the for loop above
+        //but this time draws a card face if the foundation is not empty.
         for(int i = 0; i < 4; i++) {
             x = 100 *i + 400;
             

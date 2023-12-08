@@ -57,9 +57,10 @@ public class User {
         
         //determine if the x and y coordinates match the tableau bounds
         for(int i = 0; i < 7; i++) {   
-            
+            //get an arraylist of the column we're looking at
             ArrayList<BoundingBox> tabBoundsChecker = t.tableauBounds.get(i);
             
+            //check if the tableau is clicked
             for(int j = 0; j < tabBoundsChecker.size(); j++) {
                 if(tabBoundsChecker.get(j).contains(x, y)) {
                     System.out.println("Tableau " + i + " clicked!");
