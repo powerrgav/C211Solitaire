@@ -195,7 +195,7 @@ public class SolitaireTable {
     //at the start of the game, there are 28 cards on the tableau
     private void tableau() 
     {
-        
+        double x;
         //logic to lay out the tableau
         for(int i = 0; i < 7; i++) 
         {
@@ -217,12 +217,11 @@ public class SolitaireTable {
         //draw the tableau
         for(int i = 0; i < 7; i++) 
         {
-            double x = 100 * i + 75;
+            x = 100 * i + 75;
             //create an arraylist that makes the vertical columns
             ArrayList<Card> tableauColumn = theTableau.get(i);
             
             if(tableauColumn.isEmpty()) {
-                //this y value is a placeholder for now, subject to change
                 emptyPlace(x, spaceBetween * 2 + cardHeight);
             }else 
             {               
@@ -263,7 +262,7 @@ public class SolitaireTable {
             tableauBounds.get(i).add(new BoundingBox(100 * i + 75, spaceBetween * 2 + cardHeight, cardWidth, cardHeight));
             
             for(int j = 1; j < columns.size(); j++) {
-                tableauBounds.get(i).add(new BoundingBox(100 * i + 75, spaceBetween * j + 175, cardWidth, cardHeight ));
+                tableauBounds.get(j).add(new BoundingBox(100 * i + 75, spaceBetween * j + 175, cardWidth, cardHeight ));
             }
         }
     }
@@ -272,17 +271,29 @@ public class SolitaireTable {
     //to complete the game, starting with ace. One pile for each suit
     private void foundations() 
     {
+        double x;
+        
         //start the game with 4 empty places at the top right of the canvas
         for(int i = 0; i < 4; i++) {
             
           //declare clickable area in the foundations
             foundationsBounds.add(new BoundingBox(100 *i + 400, spaceBetween, cardWidth, cardHeight));
             
-            double x = 100 *i + 400;
-
-            emptyPlace(x,50);
+            x = 100 *i + 400;
             
-            //to add: moving card from board to foundations
+            emptyPlace(x,50);
+        }
+        
+        for(int i = 0; i < 4; i++) {
+            x = 100 *i + 400;
+            
+            ArrayList<Card> redrawnFoundation = foundations.get(i);
+            
+            if(redrawnFoundation.isEmpty()) {
+                emptyPlace(x,50);
+            }else {
+                cardFace(x, 50, redrawnFoundation.get(redrawnFoundation.size()-1));
+            }
         }
     }
     
@@ -316,39 +327,6 @@ public class SolitaireTable {
         }else {
             cardFace(150,50, waste.get(waste.size() - 1));
         }
-    }
-    
-    //--------------------------------------------------------
-    //----------------------some get methods------------------
-    //--------------------------------------------------------
-    
-
-    /**
-     * @return the tableauBounds
-     */
-    public ArrayList<ArrayList<BoundingBox>> getTableauBounds() {
-        return tableauBounds;
-    }
-
-    /**
-     * @return the foundationsBounds
-     */
-    public ArrayList<BoundingBox> getFoundationsBounds() {
-        return foundationsBounds;
-    }
-
-    /**
-     * @return the wasteBounds
-     */
-    public BoundingBox getWasteBounds() {
-        return wasteBounds;
-    }
-
-    /**
-     * @return the stockBounds
-     */
-    public BoundingBox getStockBounds() {
-        return stockBounds;
     }
 
     public boolean isPileEmpty(int pileToCheck){
@@ -436,8 +414,43 @@ public class SolitaireTable {
             return (checkTopCard(sendingPile).value - checkTopCard(receivingPile).value == -1);
     }
 
+    
+    
+    //--------------------------------------------------------
+    //----------------------some get methods------------------
+    //--------------------------------------------------------
+    
+
+    /**
+     * @return the tableauBounds
+     */
+    public ArrayList<ArrayList<BoundingBox>> getTableauBounds() {
+        return tableauBounds;
+    }
+
+    /**
+     * @return the foundationsBounds
+     */
+    public ArrayList<BoundingBox> getFoundationsBounds() {
+        return foundationsBounds;
+    }
+
+    /**
+     * @return the wasteBounds
+     */
+    public BoundingBox getWasteBounds() {
+        return wasteBounds;
+    }
+
+    /**
+     * @return the stockBounds
+     */
+    public BoundingBox getStockBounds() {
+        return stockBounds;
+    }
+    
     public void redrawScreen(){
-        //tableau();
+        tableau();
         foundations();
         stockPile();
         wastePile();

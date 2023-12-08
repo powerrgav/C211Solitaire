@@ -1,7 +1,7 @@
 package application;
 import javafx.scene.SubScene;
 import javafx.scene.input.*;
-
+import javafx.geometry.BoundingBox;
 import java.util.ArrayList;
 
 
@@ -57,9 +57,15 @@ public class User {
         
         //determine if the x and y coordinates match the tableau bounds
         for(int i = 0; i < 7; i++) {   
-            for(int j = 0; j < 10; j++) {
-                //10 is just a placeholder for now. will be changed as functionality is added.
+            
+            ArrayList<BoundingBox> tabBoundsChecker = t.tableauBounds.get(i);
+            
+            for(int j = 0; j < tabBoundsChecker.size(); j++) {
+                if(tabBoundsChecker.get(j).contains(x, y)) {
+                    System.out.println("Tableau " + i + " clicked!");
+                }
             }
+            
         }
         
     }
