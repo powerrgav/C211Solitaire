@@ -271,10 +271,13 @@ public class SolitaireTable {
         }
     }
 
-    // Temporary unless it works without fail.
+    
     public void redrawTheTableau(){
 
         double x;
+        theGraphics.setFill(Color.DARKGREEN);
+        theGraphics.fillRect(200, 0, 800, 800);
+        
         //draw the tableau
         for(int i = 0; i < 7; i++)
         {
@@ -513,7 +516,7 @@ public class SolitaireTable {
     }
     
     public void redrawScreen(){
-        //redrawTheTableau();
+        redrawTheTableau();
         foundations();
         stockPile();
         wastePile();
