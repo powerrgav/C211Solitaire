@@ -30,9 +30,6 @@ public class Test extends Application {
                 deck.add(new Card(value, currentSuit));
         }
 
-        //Print out cards added to deck.
-        for(Card currentCard : deck)
-            System.out.println(currentCard.getFace() + " Suit: " + currentCard.getSuit() + " Value: " + currentCard.getValue());
     }
     
   //display the stage, which is our "table"
@@ -40,7 +37,6 @@ public class Test extends Application {
        
         //create the canvas to work on and display it
         Canvas canvas = new Canvas (800, 500);
-        
         Pane thePane = new Pane(canvas);
 
 

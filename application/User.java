@@ -34,7 +34,7 @@ public class User {
 
         //determine if the x and y coordinates match the stock pile
         if(t.getStockBounds().contains(x,y)) {
-            System.out.println("Stock clicked!");
+            //System.out.println("Stock clicked!");
             selectOrFlipCard(0);
             //t.flipCard(0);
 
@@ -43,31 +43,54 @@ public class User {
         
         //determine if the x and y coordinates match the waste pile
         if(t.getWasteBounds().contains(x,y)) {
-            System.out.println("Waste clicked!");
+            //System.out.println("Waste clicked!");
             selectOrFlipCard(Integer.valueOf(1));
         }
         
         //determine if the x and y coordinates match the foundations bounds
         for(int i = 0; i < 4; i++) {
             if(t.getFoundationsBounds().get(i).contains(x,y)) {
-                System.out.println("Foundation " + i + " clicked!");
+                //System.out.println("Foundation " + i + " clicked!");
                 selectOrFlipCard(i + 2);
             }
         }
+
+        int selectedDeck = -1;
         
         //determine if the x and y coordinates match the tableau bounds
         for(int i = 0; i < 7; i++) {   
             //get an arraylist of the column we're looking at
-            ArrayList<BoundingBox> tabBoundsChecker = t.tableauBounds.get(i);
+            ArrayList<BoundingBox> tabBoundsChecker = t.getTableauBounds().get(i);
+
+
             
             //check if the tableau is clicked
             for(int j = 0; j < tabBoundsChecker.size(); j++) {
+                //Checks that the mouse click occurs within the width of a given tableau.
+                //Also checks that the mouse click occurs below the top card of given tableau.
+                if(x < tabBoundsChecker.get(j).getMaxX() &&
+                        x > tabBoundsChecker.get(j).getMinX() &&
+                        y > t.getTableauBounds().get(i).get(0).getMinY())
+                    selectedDeck = i + 6;
+
+
+                /*  As of testing, there was inconsistent behavior when clicking any card
+                    that was not the last card of a tableau, each tableau pile somehow stored
+                    the values 6 - 12 if possible.
+
                 if(tabBoundsChecker.get(j).contains(x, y)) {
-                    System.out.println("Tableau " + i + " clicked!");
+                    if((i + 6) > selectedDeck)
+                        selectedDeck = i + 6;
                 }
+
+                */
             }
-            
+
         }
+        // I do not know why, but if I do this in the loop, I get multiple values sent.
+        // May try putting a break statement in the loop
+        if(selectedDeck > -1)
+            selectOrFlipCard(selectedDeck);
         
     }
 
@@ -90,6 +113,7 @@ public class User {
             if(t.pileHasCards(chosenPile))
                 if(t.cardVisible(chosenPile)) {
                     secondPile = chosenPile;
+                    System.out.println(secondPile + " selected as the second pile, which has cards!");
                     //t.checkTopCard(firstPile).setSelectedFalse();
                     checkIfValidMove();
                 }
@@ -97,6 +121,7 @@ public class User {
                     t.flipCard(chosenPile);
             else {
                 secondPile = chosenPile;
+                System.out.println(secondPile + " is empty, but selected as the second pile!");
                 //t.checkTopCard(firstPile).setSelectedFalse();
                 checkIfValidMove();
             }
@@ -131,12 +156,15 @@ public class User {
                 }
             }
             // Handles moving to the tableau.
-            else if(secondPile > 5 && secondPile < 10){
+            else if(secondPile > 5 && secondPile < 13){
 
                 // Handle tableau to tableau move. For now, move all cards.
-                if(firstPile > 5 && firstPile < 10 && firstPile != secondPile){
-                    t.movePileAcrossPile(firstPile, secondPile);
+                if(firstPile > 5 && firstPile < 13 && firstPile != secondPile){
+                    t.moveCardAcrossPiles(firstPile, secondPile);
                 }
+                //Handle waste to tableau.
+                else if(firstPile == 1)
+                    t.moveCardAcrossPiles(firstPile, secondPile);
             }
         }
         // Handle the second pile having cards.
@@ -149,13 +177,14 @@ public class User {
             }
             //Handle moving to tableau.
             // Will need additional logic to handle moving more than one card.
-            else if(secondPile > 5 && secondPile < 10){
+            else if(secondPile > 5 && secondPile < 13){
                 //Must be opposite color, descending order.
                 if(!t.matchingColor(firstPile, secondPile) && t.inOrder(firstPile, secondPile, false))
                     t.moveCardAcrossPiles(firstPile, secondPile);
             }
 
         }
+        t.redrawScreen();
         return true;
     }
     

@@ -7,6 +7,9 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.VPos;
 import javafx.scene.paint.Color;
 import javafx.scene.canvas.*;
+
+import javax.swing.plaf.IconUIResource;
+import javax.swing.plaf.metal.MetalSliderUI;
 /*
  * C211 Solitaire Project Table class
  * Author: Gavin Power
@@ -54,6 +57,7 @@ public class SolitaireTable {
         tableau();
         stockPile();
         setDecksAsData();
+        redrawScreen();
 
     }
     
@@ -182,7 +186,7 @@ public class SolitaireTable {
 
 
         //if the card is selected, draw a border indicating it.
-        if(card.getSelected() == true) {
+        if(card.getSelected()) {
             theGraphics.setStroke(Color.GOLD);
             theGraphics.setLineWidth(5);
             theGraphics.fillRect(x, y, cardWidth, cardHeight);
@@ -266,6 +270,63 @@ public class SolitaireTable {
             }
         }
     }
+
+    // Temporary unless it works without fail.
+    public void redrawTheTableau(){
+
+        double x;
+        //draw the tableau
+        for(int i = 0; i < 7; i++)
+        {
+            x = 100 * i + 75;
+            //create an arraylist that makes the vertical columns
+            ArrayList<Card> tableauColumn = theTableau.get(i);
+
+            if(tableauColumn.isEmpty()) {
+                emptyPlace(x, spaceBetween * 2 + cardHeight);
+            }else
+            {
+                for(int j = 0; j < tableauColumn.size(); j++) {
+                    //create two cards. one to be drawn as revealed and one hidden
+                    Card card = tableauColumn.get(j);
+                    Card topCard = tableauColumn.get(tableauColumn.size()-1);
+                    topCard.setRevealed();
+
+                    double y = spaceBetween * j + 175;
+
+                    //add an assert statement to make sure we're on the right track
+                    assert(!card.getRevealed());
+
+                    //if a card is marked as revealed, show its face. if not, its back.
+                    if(card.getRevealed()) {
+                        cardFace(x, y, card);
+                    }else
+
+                    {
+                        cardBack(x , y);
+                    }
+                }
+            }
+        }
+
+        //declare the bounds for each tableau card
+        //bounding box is declared by (x , y , width , height)
+        //the x and y for each boundary are the same as x and y
+        //in the previous for loop in this method
+        for(int i = 0; i < 7; i++) {
+
+            //we need multiple dimensions for the ArrayList because we have multiple columns
+            //that need a boundary
+            tableauBounds.add(new ArrayList<>());
+            ArrayList<Card> columns = theTableau.get(i);
+
+            tableauBounds.get(i).add(new BoundingBox(100 * i + 75, spaceBetween * 2 + cardHeight, cardWidth, cardHeight));
+
+            for(int j = 1; j < columns.size(); j++) {
+                tableauBounds.get(j).add(new BoundingBox(100 * i + 75, spaceBetween * j + 175, cardWidth, cardHeight ));
+            }
+        }
+    }
     
     //the foundations are the 4 piles upon which cards must be placed
     //to complete the game, starting with ace. One pile for each suit
@@ -311,8 +372,8 @@ public class SolitaireTable {
             theGraphics.fillRect(45, 45, cardWidth+15, cardHeight+15);
             emptyPlace(50,50);
 
-            System.out.println("End of deck");
-        }else if(deck.get(deck.size() - 1).getRevealed() == false) {
+            //System.out.println("End of deck");
+        }else if(!deck.get(deck.size() - 1).getRevealed()) {
             cardBack(50,50);
         }else{
             cardFace(50, 50, deck.get(deck.size() - 1));
@@ -322,9 +383,9 @@ public class SolitaireTable {
     //the waste pile is the pile of face up cards not put into play
     private void wastePile() 
     {
-        //draws an empty place is the deck is empty, a card face if there are cards remianing
+        //draws an empty place is the deck is empty, a card face if there are cards remaining
         if(waste.isEmpty()) {
-            System.out.println("Waste pile is empty");
+            //System.out.println("Waste pile is empty");
             emptyPlace(150,50);
         }else {
             cardFace(150,50, waste.get(waste.size() - 1));
@@ -338,7 +399,7 @@ public class SolitaireTable {
                 return waste.isEmpty();
             else if (pileToCheck >= 2 && pileToCheck <= 5)
                 return foundations.get(pileToCheck - 2).isEmpty();
-            else if(pileToCheck >= 6 && pileToCheck < 10 )
+            else if(pileToCheck >= 6 && pileToCheck < 13 )
                 return theTableau.get(pileToCheck - 6).isEmpty();
             else{
                 System.out.println("Something went horribly wrong!");
@@ -347,7 +408,7 @@ public class SolitaireTable {
     }
 
     public void flipCard(Integer intendedPile){
-        System.out.println("intendedPile is: " + intendedPile);
+        //System.out.println("intendedPile is: " + intendedPile);
         if(intendedPile == 0){
             if(!deck.isEmpty()) {
                 decksAsData[intendedPile].get(decksAsData[intendedPile].size() - 1).setRevealed();
@@ -355,9 +416,9 @@ public class SolitaireTable {
                 stockPile();
             }
         }
-        else if (intendedPile > 5 && intendedPile < 10){
+        else if (intendedPile > 5 && intendedPile < 13){
             decksAsData[intendedPile].get(decksAsData[intendedPile].size() - 1).setRevealed();
-            foundations();
+            redrawScreen();
 
         }
     }
@@ -452,9 +513,56 @@ public class SolitaireTable {
     }
     
     public void redrawScreen(){
-        tableau();
+        //redrawTheTableau();
         foundations();
         stockPile();
         wastePile();
+        String firstLine = "";
+        if(!deck.isEmpty())
+            firstLine += deck.get(deck.size() - 1).getFace() + "  ";
+        else
+            firstLine += "[]   ";
+        if(!waste.isEmpty())
+            firstLine += waste.get(waste.size() - 1).getFace() + "     ";
+        else
+            firstLine += "[]     ";
+        for(ArrayList<Card> curPilie : foundations){
+            if(!curPilie.isEmpty())
+                firstLine += curPilie.get(curPilie.size() - 1).getFace() + "  ";
+            else
+                firstLine += "[]  ";
+        }
+        System.out.println(firstLine);
+        System.out.println();
+
+
+        /*  while cards to display
+        *   for each pile
+        *       print face or mystery or empty space of curCard
+        *       print special spot if space is empty
+        *       print newline when end of pile is reach
+        *       if curCard < curPile.size keep going.
+        *
+        *
+        * */
+        for(int card = 0; card < 19; card++){
+            for(int pile = 0; pile < theTableau.size(); pile++){
+                String cardText = (theTableau.get(pile).size() > card) ? theTableau.get(pile).get(card).getFace() + "  " : "    ";
+                System.out.print(cardText);
+
+            }
+            System.out.println();
+        }
+
+        /*
+        for(ArrayList<Card> pile : theTableau){
+            for(Card curCard : pile)
+                System.out.print(curCard.getFace() + " ");
+            System.out.println();
+        } */
+        System.out.println();
     }
+
+
+
 }//end class

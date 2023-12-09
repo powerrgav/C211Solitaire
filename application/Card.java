@@ -83,9 +83,14 @@ public class Card {
     public String getFace(){
         String faceAsString = "";
 
+        if(!revealed)
+            return "??";
+
         //Card is not a face card, formatting not needed.
-        if( value > 1 && value < 11)
+        if( value > 1 && value < 10)
             faceAsString = String.format("%d%s", value, suit);
+        else if(value == 10)
+            faceAsString = String.valueOf(value);
         //Card is a face card, and needs formatting.
         else{
 
