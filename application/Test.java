@@ -11,7 +11,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class Test extends Application {
+public class Test extends Application 
+{
     public static void main(String[] args) {
         testCard();
         launch(args);
