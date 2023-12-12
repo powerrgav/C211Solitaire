@@ -411,28 +411,20 @@ public class SolitaireTable {
         }
     }
 
-    public void alphaDeckToDiscard(){
-        if(deck.isEmpty()) {
-            stockPile();
-            return;
-        }
-        else if(!deck.get(deck.size() - 1).getRevealed())
-            return;
-
-        waste.add(getTopCard());
-        wastePile();
-        stockPile();
-    }
-
-    public void selectCards(Integer intendedPile, Integer cardsFromEnd, boolean deselect){
+    public boolean selectCards(Integer intendedPile, Integer cardsFromEnd, boolean deselect){
 
         int cardToSelect = decksAsData[intendedPile].size() - cardsFromEnd;
+        System.out.println("Card " + cardToSelect + " selected.");
 
         if(!deselect){
-            if(decksAsData[intendedPile].get(cardToSelect).getRevealed())
+            if(decksAsData[intendedPile].get(cardToSelect).getRevealed()) {
                 decksAsData[intendedPile].get(cardToSelect).setSelected();
-            else
+                return true;
+            }
+            else {
                 selectCards(intendedPile, cardsFromEnd, true);
+                return false;
+            }
         }
         else{
             for(Card curCard : decksAsData[intendedPile]){
@@ -440,6 +432,7 @@ public class SolitaireTable {
             }
         }
         redrawScreen();
+        return false;
     }
 
     public Card checkTopCard(Integer intendedPile){
@@ -467,6 +460,7 @@ public class SolitaireTable {
 
     public void moveCardAcrossPiles(Integer sendingPile, Integer receivingPile){
         decksAsData[receivingPile].add(decksAsData[sendingPile].remove(decksAsData[sendingPile].size() - 1));
+        deselectAll();
         redrawScreen();
     }
 
@@ -477,8 +471,10 @@ public class SolitaireTable {
 
         if(reverseBoi.hasPrevious() && reverseBoi.previous().getRevealed())
             reverseBoi.next().setSelected();
-        else
+        else {
+            System.out.println("we can select no more cards");
             return false;
+        }
 
         redrawScreen();
         return true;
@@ -489,6 +485,7 @@ public class SolitaireTable {
         while(decksAsData[sendPile].size() > lastCardRemoved){
             decksAsData[sendPile].get(lastCardRemoved).setSelectedFalse();
             decksAsData[receivePile].add(decksAsData[sendPile].remove(lastCardRemoved));
+            deselectAll();
             redrawScreen();
         }
     }
@@ -512,6 +509,13 @@ public class SolitaireTable {
             return (checkTopCard(sendingPile).value - checkTopCard(receivingPile).value == 1);
         else
             return (checkTopCard(sendingPile).value - checkTopCard(receivingPile).value == -1);
+    }
+
+    public void deselectAll(){
+        for(ArrayList<Card> curPile : decksAsData)
+            for(Card curCard : curPile)
+                curCard.setSelectedFalse();
+        redrawScreen();
     }
 
     

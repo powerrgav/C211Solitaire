@@ -4,7 +4,13 @@ import javafx.scene.input.*;
 import javafx.geometry.BoundingBox;
 import java.util.ArrayList;
 
+/*  Project:     C211Solitaire
+ *   Author:      Brandon J. AKA TarquisTrueshot
+ *   Date:        12/11/2023
+ *   Description: Card class that can be used for comparison and output. */
 
+
+//This class interfaces with the SolitaireTable class to allow mouse input.
 public class User {
 
 
@@ -12,13 +18,13 @@ public class User {
     //get a default solitaire table
     SolitaireTable t;
 
+    //These variables store which pile the user has clicked.
     Integer firstPile = null;
     Integer secondPile = null;
 
     Integer cardsToGrab = 1;
 
-    Integer pileOne = null;
-    Integer pileTwo = null;
+    boolean partialPileMove = false;
 
     public User(SolitaireTable table){
 
@@ -33,9 +39,6 @@ public class User {
         double x = e.getSceneX();
         double y = e.getSceneY();
 
-        //System.out.println("Mouse click registered at (" + e.getSceneX() + ", " + e.getSceneY() + ")!");
-        //if(e != null)
-            //return;
 
         //determine if the x and y coordinates match the stock pile
         if(t.getStockBounds().contains(x,y)) {
@@ -69,21 +72,12 @@ public class User {
             
             //check if the tableau is clicked
             for(int j = 0; j < tabBoundsChecker.size(); j++) {
-                //System.out.println("Tableau " + (j + 1) +": (" + tabBoundsChecker.get(j).getMinX() + ","  + tabBoundsChecker.get(j).getMaxX() + ")");
-                //Checks that the mouse click occurs within the width of a given tableau.
-                //Also checks that the mouse click occurs below the top card of given tableau.
+
                 if(x < tabBoundsChecker.get(j).getMaxX() &&
                         x > tabBoundsChecker.get(j).getMinX() &&
                         y > 200)  {
                     selectedDeck = i + 6;
                 }
-
-
-                /*  As of testing, there was inconsistent behavior when clicking any card
-                    that was not the last card of a tableau, each tableau pile somehow stored
-                    the values 6 - 12 if possible. */
-
-
 
             }
 
@@ -97,69 +91,6 @@ public class User {
             selectOrFlipCard(selectedDeck);
         }
         
-    }
-    private void selectFlip(Integer chosenPile){
-        if (firstPile == null) {
-            if (t.pileHasCards(chosenPile)) { // chosen pile must have cards.
-                if (t.cardVisible(chosenPile)) { // chosen pile's top card must be visible.
-                    if (chosenPile < 2 || chosenPile > 5) { //Not a foundation.
-                        firstPile = chosenPile;
-                        //t.checkTopCard(firstPile).setSelected();
-                        //t.redrawScreen();
-                        System.out.println(chosenPile + " selected as the first pile!");
-                    }
-                } else
-                    t.flipCard(chosenPile);
-            }
-        }
-        else if(firstPile == chosenPile){
-            cardsToGrab++;
-            if(firstPile > 5 && firstPile < 13){
-                if(!t.selectNextCard(chosenPile, cardsToGrab)){
-                    t.selectCards(chosenPile, 0, true);
-                    firstPile = null;
-
-                }
-            }
-        }
-        else if(secondPile == null){
-
-            if(t.pileHasCards(chosenPile))
-                if(t.cardVisible(chosenPile)) {
-                    secondPile = chosenPile;
-                    System.out.println(secondPile + " selected as the second pile, which has cards!");
-                    //t.checkTopCard(firstPile).setSelectedFalse();
-                    checkIfValidMove();
-                }
-                else
-                    t.flipCard(chosenPile);
-            else{
-                secondPile = chosenPile;
-                System.out.println(secondPile + " is empty, but selected as the second pile!");
-                //t.checkTopCard(firstPile).setSelectedFalse();
-                if(cardsToGrab < 1)
-                    checkIfValidMove();
-                else
-                    validatePileMove();
-            }
-            if((firstPile == secondPile) && (secondPile > 5) && (secondPile < 13)){
-                cardsToGrab++;
-                if(t.pileSize(chosenPile) > cardsToGrab) {
-                    System.out.println("stack mode initiated");
-                    t.selectCards(firstPile, cardsToGrab, false);
-                    t.redrawScreen();
-                    secondPile = null;
-                    return;
-                }
-            }
-
-            firstPile = null;
-            secondPile = null;
-            //System.out.println(chosenPile + " selected as the second pile!");
-        }
-
-
-
     }
 
 
@@ -183,7 +114,7 @@ public class User {
             if(t.pileHasCards(chosenPile))
                 if(t.cardVisible(chosenPile)) {
                     secondPile = chosenPile;
-                    System.out.println(secondPile + " selected as the second pile, which has cards!");
+                    System.out.println(cardsToGrab + " cards to grab");
                     //t.checkTopCard(firstPile).setSelectedFalse();
                     checkIfValidMove();
                 }
@@ -191,39 +122,28 @@ public class User {
                     t.flipCard(chosenPile);
             else{
                 secondPile = chosenPile;
-                System.out.println(secondPile + " is empty, but selected as the second pile!");
                 //t.checkTopCard(firstPile).setSelectedFalse();
-                if(cardsToGrab < 1)
+                if(!partialPileMove)
                     checkIfValidMove();
                 else
                     validatePileMove();
             }
             if((firstPile == secondPile) && (secondPile > 5) && (secondPile < 13)){
                 cardsToGrab++;
+                partialPileMove = true;
                 if(t.pileSize(chosenPile) > cardsToGrab) {
-                    System.out.println("stack mode initiated");
-                    t.selectCards(firstPile, cardsToGrab, false);
-                    t.redrawScreen();
-                    secondPile = null;
-                    return;
+                    if(t.selectCards(firstPile, cardsToGrab, false)) {
+                        t.redrawScreen();
+                        secondPile = null;
+                        return;
+                    }
                 }
             }
 
             firstPile = null;
             secondPile = null;
-            //System.out.println(chosenPile + " selected as the second pile!");
+            cardsToGrab = 1;
         }
-        else {
-            //System.out.println("Two piles have already been selected!");
-            //System.out.println("Valid Move: " + checkIfEmpty(firstPile, secondPile));
-            //t.alphaDeckToDiscard();
-            //firstPile = null;
-            //secondPile = null;
-        }
-    }
-
-    private boolean checkIfEmpty(Integer pileOne, Integer pileTwo){
-        return (t.isPileEmpty(pileOne) && t.isPileEmpty(pileTwo));
     }
 
     private void validatePileMove(){
