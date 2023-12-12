@@ -1,6 +1,8 @@
 # C211Solitaire
 C211 Solitaire Project
-Contributors: Gavin Power, Charlie Kinnett, Brandon Jones
+Contributors: Gavin Power, Brandon Jones
+
+Charlie Kinnet did not contribute, and messaged us on the day the assignment was due.
 
 This repository contains the code for our group's implementation of the card game solitaire.
 
