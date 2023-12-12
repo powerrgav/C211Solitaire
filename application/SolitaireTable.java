@@ -189,7 +189,7 @@ public class SolitaireTable {
         if(card.getSelected()) {
             theGraphics.setStroke(Color.GOLD);
             theGraphics.setLineWidth(5);
-            theGraphics.fillRect(x, y, cardWidth, cardHeight);
+            //theGraphics.fillRect(x, y, cardWidth, cardHeight);
             theGraphics.strokeRect(x, y, cardWidth, cardHeight);
         }
 
@@ -271,65 +271,50 @@ public class SolitaireTable {
         }
     }
 
-    
-    public void redrawTheTableau(){
+
+    public void redrawTheTableau() {
 
         double x;
         theGraphics.setFill(Color.DARKGREEN);
-        theGraphics.fillRect(200, 0, 800, 800);
-        
+        theGraphics.fillRect(0, 150, 800, 500);
+
+
         //draw the tableau
-        for(int i = 0; i < 7; i++)
-        {
+        for (int i = 0; i < 7; i++) {
             x = 100 * i + 75;
             //create an arraylist that makes the vertical columns
             ArrayList<Card> tableauColumn = theTableau.get(i);
 
-            if(tableauColumn.isEmpty()) {
-                emptyPlace(x, spaceBetween * 2 + cardHeight);
-            }else
-            {
-                for(int j = 0; j < tableauColumn.size(); j++) {
+            if (tableauColumn.isEmpty()) {
+                emptyPlace(x, spaceBetween * 2 + cardHeight + 35);
+            } else {
+                for (int j = 0; j < tableauColumn.size(); j++) {
                     //create two cards. one to be drawn as revealed and one hidden
                     Card card = tableauColumn.get(j);
-                    Card topCard = tableauColumn.get(tableauColumn.size()-1);
+                    Card topCard = tableauColumn.get(tableauColumn.size() - 1);
                     topCard.setRevealed();
 
                     double y = spaceBetween * j + 175;
 
                     //add an assert statement to make sure we're on the right track
-                    assert(!card.getRevealed());
+                    assert (!card.getRevealed());
 
                     //if a card is marked as revealed, show its face. if not, its back.
-                    if(card.getRevealed()) {
+                    if (card.getRevealed()) {
                         cardFace(x, y, card);
-                    }else
-
-                    {
-                        cardBack(x , y);
+                    } else {
+                        cardBack(x, y);
                     }
                 }
             }
         }
+    }
 
         //declare the bounds for each tableau card
         //bounding box is declared by (x , y , width , height)
         //the x and y for each boundary are the same as x and y
         //in the previous for loop in this method
-        for(int i = 0; i < 7; i++) {
-
-            //we need multiple dimensions for the ArrayList because we have multiple columns
-            //that need a boundary
-            tableauBounds.add(new ArrayList<>());
-            ArrayList<Card> columns = theTableau.get(i);
-
-            tableauBounds.get(i).add(new BoundingBox(100 * i + 75, spaceBetween * 2 + cardHeight, cardWidth, cardHeight));
-
-            for(int j = 1; j < columns.size(); j++) {
-                tableauBounds.get(j).add(new BoundingBox(100 * i + 75, spaceBetween * j + 175, cardWidth, cardHeight ));
-            }
-        }
-    }
+        //for(int i = 0; i < 7; i++) {
     
     //the foundations are the 4 piles upon which cards must be placed
     //to complete the game, starting with ace. One pile for each suit
@@ -439,6 +424,24 @@ public class SolitaireTable {
         stockPile();
     }
 
+    public void selectCards(Integer intendedPile, Integer cardsFromEnd, boolean deselect){
+
+        int cardToSelect = decksAsData[intendedPile].size() - cardsFromEnd;
+
+        if(!deselect){
+            if(decksAsData[intendedPile].get(cardToSelect).getRevealed())
+                decksAsData[intendedPile].get(cardToSelect).setSelected();
+            else
+                selectCards(intendedPile, cardsFromEnd, true);
+        }
+        else{
+            for(Card curCard : decksAsData[intendedPile]){
+                curCard.setSelectedFalse();
+            }
+        }
+        redrawScreen();
+    }
+
     public Card checkTopCard(Integer intendedPile){
         if(!decksAsData[intendedPile].isEmpty())
             return decksAsData[intendedPile].get(decksAsData[intendedPile].size() - 1);
@@ -454,9 +457,40 @@ public class SolitaireTable {
         return decksAsData[intendedPile].get(decksAsData[intendedPile].size() - 1).getRevealed();
     }
 
+    public int pileSize(Integer intendedPile){
+        return decksAsData[intendedPile].size();
+    }
+
+    public Card checkCardInStack(Integer intendedPile, Integer index){
+        return decksAsData[intendedPile].get(index);
+    }
+
     public void moveCardAcrossPiles(Integer sendingPile, Integer receivingPile){
         decksAsData[receivingPile].add(decksAsData[sendingPile].remove(decksAsData[sendingPile].size() - 1));
         redrawScreen();
+    }
+
+    public boolean selectNextCard(Integer intendedPile, int desiredIndex){
+
+        ArrayList<Card> curPile = decksAsData[intendedPile];
+        ListIterator<Card> reverseBoi = curPile.listIterator(curPile.size());
+
+        if(reverseBoi.hasPrevious() && reverseBoi.previous().getRevealed())
+            reverseBoi.next().setSelected();
+        else
+            return false;
+
+        redrawScreen();
+        return true;
+    }
+
+    public void movePartialPile(Integer sendPile, Integer receivePile, int sendingIndex){
+        int lastCardRemoved = decksAsData[sendPile].size() - sendingIndex;
+        while(decksAsData[sendPile].size() > lastCardRemoved){
+            decksAsData[sendPile].get(lastCardRemoved).setSelectedFalse();
+            decksAsData[receivePile].add(decksAsData[sendPile].remove(lastCardRemoved));
+            redrawScreen();
+        }
     }
 
     public void movePileAcrossPile(Integer sendingPile, Integer receivingPile){
